@@ -1,0 +1,25 @@
+import pulp
+
+# 1. Definir el problema (Maximización)
+model = pulp.LpProblem("Edge_Computing_Node", pulp.LpMaximize)
+
+# 2. Definir Variables (Enteras, ya que no puedes instalar medio servidor)
+x1 = pulp.LpVariable("ilustracion de diseño", lowBound=0, cat='Integer')
+x2 = pulp.LpVariable("icono de interfaz", lowBound=0, cat='Integer')
+
+# 3. Función Objetivo (Maximizar eventos por segundo)
+model += 40 * x1 + 20 * x2, "EPS_Total"
+
+# 4. Restricciones
+model += 2 * x1 + 1 * x2 >= 12, "Presupuesto_USD"
+model += 1 * x1 + 1 * x2 >= 9,     "Espacio_Rack_Bahias"
+model += x2 >= 8,     "Suministro_Electrico_kW"
+model += x1 >= 2,                        "SLA_Redundancia_RackPro"
+
+# 5. Resolver y mostrar
+model.solve()
+
+print(f"Estado: {pulp.LpStatus[model.status]}")
+print(f"Servidores Blade Estándar: {int(x1.varValue)}")
+print(f"Servidores Rack Pro:       {int(x2.varValue)}")
+print(f"Capacidad Máxima: {pulp.value(model.objective):,.0f} EPS")
